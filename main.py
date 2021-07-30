@@ -2,7 +2,7 @@ import argparse
 import yaml
 import os
 import time
-from src.result.model_output_generation import make_evaluation
+from src.result.model_output_generation import make_evaluation 
 
 with open("cnfg.yml", 'r') as stream:
     try:
