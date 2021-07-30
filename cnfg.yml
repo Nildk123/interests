@@ -1,0 +1,35 @@
+file_input:
+  input_file_path: 'data\input' #Input file folder path
+  input_file_name: 'input_data.csv' #Input file
+  use_DB: 0 #flag variable. 1 if the input is comming from DB else flat file 
+  helper_file_path: 'data\helpers' #Additional input file helper path
+  supplier_filename: ['supplier_reqno_prob.csv', 'supplier_cat_3_class.csv']  #Supplier path filename
+model_input:
+  num_class: 3 #Two class model or three. To run both we have to run the model twice
+  device: 'cpu'
+  is_train: 0 #flag variable to identify the model usage, train or validation. Use 1 for train 
+  essential_col: ['ReqNum', 'Commodity', 'Item', 'Justification', 'SupplierName', 'Currency', 'Price', 'LineTotal', 'Account'] #Required column for model evaluation. If any of this is unavailable the evaluation won't run 
+  unit_price_bins: [-1, 1.1, 100.1, 1500.1, 50000.1, 100000000000] #Unit price range for categorization in USD
+  unit_price_labels: ["unit_one","unit_100","unit_1500", "unit_50000", 'unit_max']
+  quantity_bins: [-1, 1.1, 10000000000] #Number of quantity purchased bin
+  quantity_labels: ["qty_one","qty_gt_1"]
+  currency_list: ['CAD', 'GBP', 'SGD', 'USD']
+  converter_list: [0.8, 1.38,0.74, 1]
+  conv_default: 0.7 #If any cur6rency is missing from the list given it will take this value
+  sup_default_prob_FA: 0.1 #If supplier unavailable in lookup table - the default value for being a fixed asset
+  line_total_ind_amount: 250000 #Line total abount above which the expense are marked as prepaid
+  column_list: ['Item_mod', 'Justification_mod', 'Commodity_mod']
+  bert_weight_path: 'model_weights'
+  weight_dir_3: ['model_save_item_3', 'model_save_justification_3', 'model_save_comodity_3']
+  weight_dir_2: ['model_save_item', 'model_save_justification', 'model_save_comodity']
+  base_dir: 'base_weights' #base directory for saved weights
+  use_saved: True
+  max_len: [100, 100, 50] #the max len for item, justification, comodity respectively
+  batch_size: 32
+  key_word_list: ['ilc', 'soc']
+  xgb_weight_folder: 'XGB_weights'
+  xgb_weights: ['XGB_weights_V1.dat','XGB_weights_V1_3class.dat']
+  FA_cutoff_unit_price: 5000 #The amount below which Fixed assets are marked as expense
+file_output:
+  output_dir: 'data\output'
+  file_name: ['final_output_2class.csv', 'final_output_3class.csv']
