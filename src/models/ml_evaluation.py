@@ -68,15 +68,6 @@ def test_on_pretrained_model(df, text_col, model_location, base_location, use_sa
     input_ids = create_bert_tokens(tokenizer, df, text_col, MAX_LEN)
     attention_masks = create_attention_mask(input_ids)
     prediction_dataloader = prediction_data_creation(input_ids, attention_masks, batch_size) 
-    if num_class > 2:
-        model_path = os.path.join(os.getcwd(), model_location, 'trained_model.bin')
-        model = DistilBERTClass(num_class, use_saved, base_location)
-        model.load_state_dict(torch.load(model_path))
-    else:
-        model_path = os.path.join(os.getcwd(), model_location, 'pytorch_model.bin')
-        model_cnf = os.path.join(os.getcwd(), model_location, 'config.json')
-        model = DistilBertForSequenceClassification.from_pretrained(model_path, config = model_cnf, local_files_only = True)
-    #print(model_path)
     if device == 'cuda': 
         if torch.cuda.is_available():
             device = torch.device("cuda")
@@ -88,6 +79,15 @@ def test_on_pretrained_model(df, text_col, model_location, base_location, use_sa
     else:
         device = torch.device("cpu")
         print('Using CPU to run the model. You can expect an extended runtime. Use GPU instead.')
+    if num_class > 2:
+        model_path = os.path.join(os.getcwd(), model_location, 'trained_model.bin')
+        model = DistilBERTClass(num_class, use_saved, base_location)
+        model.load_state_dict(torch.load(model_path, map_location = device))
+    else:
+        model_path = os.path.join(os.getcwd(), model_location, 'pytorch_model.bin')
+        model_cnf = os.path.join(os.getcwd(), model_location, 'config.json')
+        model = DistilBertForSequenceClassification.from_pretrained(model_path, config = model_cnf, local_files_only = True)
+    #print(model_path)
     model.to(device)
     if num_class > 2:
         predictions = Evaluate_model(model, prediction_dataloader, num_class, device)
